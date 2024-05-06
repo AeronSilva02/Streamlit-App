@@ -121,7 +121,7 @@ with association_rules:
         st.subheader('Antecedent wise Lift distribution')
     
         fig8=px.pie(rules,values="lift",names='antecedents', template = "gridon")
-        st.plotly_chart(fig9,use_container_width=True)
+        st.plotly_chart(fig8,use_container_width=True)
 
     with chart2:
         st.subheader('Consequnt wise Lift distribution')
