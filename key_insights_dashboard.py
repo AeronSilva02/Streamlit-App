@@ -34,17 +34,41 @@ with Order_details:
     category = st.sidebar.multiselect('Pick your category',orders['Category'].unique())
     
     #filtering the dashboard using the Market and product category
-    if market and category:  # Both market and category are selected
+    if market and category:  
         filtered_data = orders[(orders["Market"].isin([market])) & (orders["Category"].isin(category))]
-    elif market:  # Only market is selected
+    elif market:  
         filtered_data = orders[orders["Market"].isin([market])]
-    elif category:  # Only category is selected
+    elif category:  
         # Retrieve subcategories belonging to the selected category
         subcategories = orders[orders["Category"].isin(category)]["Sub-Category"].unique().tolist()
         # Filter based on both category and its subcategories
         filtered_data = orders[(orders["Category"].isin(category)) | (orders["Sub-Category"].isin(subcategories))]
     else:
-        filtered_data = orders.copy()  # Show all data if no selections are made
+        filtered_data = orders.copy() 
+
+    #Charts for the Orders dataset
+   
+    #Sales by sub category
+    st.subheader('Sales by Sub Category')
+    grp=filtered_data.groupby(by=['Sub-Category'],as_index=False)['Sales'].sum()
+    fig1=px.bar(grp,x='Sub-Category',y='Sales', height=600,width=700)
+        
+    st.plotly_chart(fig1)
+
+    
+    #Sales by ship mode
+    st.subheader ('Sales by ship mode')
+    fig2=px.box(filtered_data,x='Ship Mode', y='Sales',height=400,width=600)
+    st.plotly_chart(fig2)
+
+
+    #Profit by market
+    st.subheader('Profit by Country')
+    grp=filtered_data.groupby(by=['Country'],as_index=False)['Profit'].sum()
+    fig3=px.bar(grp,x="Country",y="Profit")
+    st.plotly_chart(fig3)
+
+
 
 
 
