@@ -67,6 +67,46 @@ with Order_details:
     grp=filtered_data.groupby(by=['Country'],as_index=False)['Profit'].sum()
     fig3=px.bar(grp,x="Country",y="Profit")
     st.plotly_chart(fig3)
+        #scatter plot to show relationship between profit and sales
+    scatter = px.scatter(orders, x = "Quantity", y = "Profit",size='Sales')
+    scatter['layout'].update(title="Relationship between Sales and Profits using Scatter Plot.",
+                titlefont = dict(size=20),xaxis = dict(title="Sales",titlefont=dict(size=19)),
+                yaxis = dict(title = "Profit", titlefont = dict(size=19)))
+    st.plotly_chart(scatter,use_container_width=True)
+
+
+    #line chart to show sales over time
+    filtered_data["month_year"] = filtered_data["Order Date"].dt.to_period("M")
+    st.subheader('Sales over time')
+
+    line = pd.DataFrame(filtered_data.groupby(filtered_data["month_year"].dt.strftime("%Y : %b"))["Sales"].sum()).reset_index()
+    line = line.sort_values(by="month_year")
+    fig4 = px.line(line, x = "month_year", y="Sales", labels = {"Sales": "Amount"},height=500, width = 1500,template="gridon")
+    st.plotly_chart(fig4,use_container_width=True)
+    
+    #segemnt wise sales distribution
+    st.subheader('Segment wise profit distribution')
+    #catedf=orders.groupby(by=['Market'],as_index=False)['Profit'].sum()
+    fig5=px.pie(orders,values="Sales",names='Segment')
+    st.plotly_chart(fig5)
+        
+
+with association_rules:
+    st.header("Market Basket Analysis Association Ruels")
+    st.write(rules)
+    
+    #HEAT MAP
+    import seaborn as sns
+    st.subheader("Association Rules Heat Map")
+    # Create the heatmap based on selected axes
+    pivot_data = rules.pivot_table(index=rules['antecedents'], columns=rules['consequents'], values='lift')  
+
+    heatfig, ax = plt.subplots(figsize=(10, 6))
+    sns.heatmap(pivot_data, ax=ax, annot=True, cmap="viridis")  
+    st.pyplot(heatfig)
+    
+
+
 
 
 
