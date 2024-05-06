@@ -134,7 +134,7 @@ with association_rules:
     st.subheader("Hierarchical view of Antecedents with their Consequents based Support")
     fig10 = px.treemap(rules, path = ["antecedents","consequents"], values = "support",hover_data = ["support"],
                     color = "consequents")
-    figt.update_layout(width = 800, height = 650)
+    fig10.update_layout(width = 800, height = 650)
     st.plotly_chart(fig10, use_container_width=True)
     
 
