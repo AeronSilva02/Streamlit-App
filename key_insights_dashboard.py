@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 orders=pd.read_csv('orders_cleaned.csv')
 rules=pd.read_csv('association_rules.csv')
 
-st.title('Key Insights Dashboard')
+st.set_page_config(layout='wide')
+st.title(':department_store: Minger Electronics Insights Dashboard')
 col1,col2=st.columns((2))
 #Adding dashboard filter
 st.sidebar.title("Dashboard Filters")
@@ -16,7 +17,7 @@ st.sidebar.title("Dashboard Filters")
 
 
 #making tabs
-Order_details, association_rules=st.tabs(['Order Details','Market Basket Analysis Association Rules'])
+Order_details, association_rules=st.tabs(['Order Details','Market Basket Analysis'])
 with Order_details:
     st.header("Order Details")
     st.write(orders)
@@ -53,21 +54,22 @@ with Order_details:
     grp=filtered_data.groupby(by=['Sub-Category'],as_index=False)['Sales'].sum()
     fig1=px.bar(grp,x='Sub-Category',y='Sales', height=600,width=700)
         
-    st.plotly_chart(fig1)
+    st.plotly_chart(fig1,use_container_width=True)
 
     
     #Sales by ship mode
     st.subheader ('Sales by ship mode')
     fig2=px.box(filtered_data,x='Ship Mode', y='Sales',height=400,width=600)
-    st.plotly_chart(fig2)
+    st.plotly_chart(fig2,use_container_width=True)
 
 
-    #Profit by market
+    #Profit by country
     st.subheader('Profit by Country')
     grp=filtered_data.groupby(by=['Country'],as_index=False)['Profit'].sum()
     fig3=px.bar(grp,x="Country",y="Profit")
-    st.plotly_chart(fig3)
-        #scatter plot to show relationship between profit and sales
+    st.plotly_chart(fig3,use_container_width=True)
+        
+    #scatter plot to show relationship between profit and sales
     scatter = px.scatter(orders, x = "Quantity", y = "Profit",size='Sales')
     scatter['layout'].update(title="Relationship between Sales and Profits using Scatter Plot.",
                 titlefont = dict(size=20),xaxis = dict(title="Sales",titlefont=dict(size=19)),
@@ -88,7 +90,8 @@ with Order_details:
     st.subheader('Segment wise profit distribution')
     #catedf=orders.groupby(by=['Market'],as_index=False)['Profit'].sum()
     fig5=px.pie(orders,values="Sales",names='Segment')
-    st.plotly_chart(fig5)
+    fig5.update_traces(text=orders['Segment'],textposition='outside')
+    st.plotly_chart(fig5,use_container_width=True)
         
 
 with association_rules:
@@ -107,31 +110,32 @@ with association_rules:
         
     chart1, chart2 = st.columns((2))
     with chart1:
-        fig69 = px.bar(rules, x='support', y='antecedents', orientation='h',title='Top Antecedents based on Support')
-        st.plotly_chart(fig69,use_container_width=True)
+        fig6 = px.bar(rules, x='support', y='antecedents', orientation='h',title='Top Antecedents based on Support')
+        st.plotly_chart(fig6,use_container_width=True)
     with chart2:
-        fig9 = px.bar(rules, x='support', y='consequents', orientation='h',title='Top Consequents based on Support')
-        st.plotly_chart(fig9,use_container_width=True)
+        fig7 = px.bar(rules, x='support', y='consequents', orientation='h',title='Top Consequents based on Support')
+        st.plotly_chart(fig7,use_container_width=True)
     
     #pie charts
-    st.subheader('Antecedent wise Lift distribution')
+    with chart1:
+        st.subheader('Antecedent wise Lift distribution')
     
-    figx=px.pie(rules,values="lift",names='antecedents', template = "gridon")
-    figx.update_traces(text = rules["antecedents"])
-    st.plotly_chart(figx,use_container_width=True)
+        fig8=px.pie(rules,values="lift",names='antecedents', template = "gridon")
+        st.plotly_chart(fig9,use_container_width=True)
 
-    st.subheader('Consequnt wise Lift distribution')
+    with chart2:
+        st.subheader('Consequnt wise Lift distribution')
+            
+        fig9=px.pie(rules,values="lift",names='consequents', template = "gridon")
         
-    figy=px.pie(rules,values="lift",names='consequents', template = "gridon")
-    figy.update_traces(text = rules["consequents"])
-    st.plotly_chart(figy,use_container_width=True)
+        st.plotly_chart(fig9,use_container_width=True)
         
     #treemap
     st.subheader("Hierarchical view of Antecedents with their Consequents based Support")
-    figt = px.treemap(rules, path = ["antecedents","consequents"], values = "support",hover_data = ["support"],
+    fig10 = px.treemap(rules, path = ["antecedents","consequents"], values = "support",hover_data = ["support"],
                     color = "consequents")
     figt.update_layout(width = 800, height = 650)
-    st.plotly_chart(figt, use_container_width=True)
+    st.plotly_chart(fig10, use_container_width=True)
     
 
 
