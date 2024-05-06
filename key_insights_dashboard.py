@@ -68,13 +68,23 @@ with Order_details:
     grp=filtered_data.groupby(by=['Country'],as_index=False)['Profit'].sum()
     fig3=px.bar(grp,x="Country",y="Profit")
     st.plotly_chart(fig3,use_container_width=True)
-        
-    #scatter plot to show relationship between profit and sales
-    scatter = px.scatter(orders, x = "Quantity", y = "Profit",size='Sales')
-    scatter['layout'].update(title="Relationship between Sales and Profits using Scatter Plot.",
+
+    chart1,chart2= st.columns((2))
+    with chart1:                          
+        #scatter plot to show relationship between profit and sales
+        scatter = px.scatter(orders, x = "Quantity", y = "Profit",size='Sales')
+        scatter['layout'].update(title="Relationship between Sales and Profits using Scatter Plot.",
                 titlefont = dict(size=20),xaxis = dict(title="Sales",titlefont=dict(size=19)),
                 yaxis = dict(title = "Profit", titlefont = dict(size=19)))
-    st.plotly_chart(scatter,use_container_width=True)
+        st.plotly_chart(scatter,use_container_width=True)
+
+    with chart2:
+        #segemnt wise sales distribution
+        st.subheader('Segment wise profit distribution')
+        
+        fig5=px.pie(orders,values="Sales",names='Segment')
+        fig5.update_traces(text=orders['Segment'],textposition='outside')
+        st.plotly_chart(fig5,use_container_width=True)
 
 
     #line chart to show sales over time
@@ -86,12 +96,7 @@ with Order_details:
     fig4 = px.line(line, x = "month_year", y="Sales", labels = {"Sales": "Amount"},height=500, width = 1500,template="gridon")
     st.plotly_chart(fig4,use_container_width=True)
     
-    #segemnt wise sales distribution
-    st.subheader('Segment wise profit distribution')
-    #catedf=orders.groupby(by=['Market'],as_index=False)['Profit'].sum()
-    fig5=px.pie(orders,values="Sales",names='Segment')
-    fig5.update_traces(text=orders['Segment'],textposition='outside')
-    st.plotly_chart(fig5,use_container_width=True)
+    
         
 
 with association_rules:
@@ -116,19 +121,7 @@ with association_rules:
         fig7 = px.bar(rules, x='support', y='consequents', orientation='h',title='Top Consequents based on Support')
         st.plotly_chart(fig7,use_container_width=True)
     
-    #pie charts
-    with chart1:
-        st.subheader('Antecedent wise Lift distribution')
     
-        fig8=px.pie(rules,values="lift",names='antecedents', template = "gridon")
-        st.plotly_chart(fig8,use_container_width=True)
-
-    with chart2:
-        st.subheader('Consequnt wise Lift distribution')
-            
-        fig9=px.pie(rules,values="lift",names='consequents', template = "gridon")
-        
-        st.plotly_chart(fig9,use_container_width=True)
         
     #treemap
     st.subheader("Hierarchical view of Antecedents with their Consequents based Support")
