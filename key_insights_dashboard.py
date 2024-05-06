@@ -104,7 +104,36 @@ with association_rules:
     heatfig, ax = plt.subplots(figsize=(10, 6))
     sns.heatmap(pivot_data, ax=ax, annot=True, cmap="viridis")  
     st.pyplot(heatfig)
+        
+    chart1, chart2 = st.columns((2))
+    with chart1:
+        fig69 = px.bar(rules, x='support', y='antecedents', orientation='h',title='Top Antecedents based on Support')
+        st.plotly_chart(fig69,use_container_width=True)
+    with chart2:
+        fig9 = px.bar(rules, x='support', y='consequents', orientation='h',title='Top Consequents based on Support')
+        st.plotly_chart(fig9,use_container_width=True)
     
+    #pie charts
+    st.subheader('Antecedent wise Lift distribution')
+    
+    figx=px.pie(rules,values="lift",names='antecedents', template = "gridon")
+    figx.update_traces(text = rules["antecedents"])
+    st.plotly_chart(figx,use_container_width=True)
+
+    st.subheader('Consequnt wise Lift distribution')
+        
+    figy=px.pie(rules,values="lift",names='consequents', template = "gridon")
+    figy.update_traces(text = rules["consequents"])
+    st.plotly_chart(figy,use_container_width=True)
+        
+    #treemap
+    st.subheader("Hierarchical view of Antecedents with their Consequents based Support")
+    figt = px.treemap(rules, path = ["antecedents","consequents"], values = "support",hover_data = ["support"],
+                    color = "consequents")
+    figt.update_layout(width = 800, height = 650)
+    st.plotly_chart(figt, use_container_width=True)
+    
+
 
 
 
